@@ -1,0 +1,9 @@
+pip
+requests
+requests_cache
+Flask
+cassandra-driver
+flask_httpauth
+passlib
+itsdangerous
+

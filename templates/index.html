@@ -1,0 +1,391 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+<title>COVID-19 Data</title>
+<link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css">
+<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/font-awesome/4.7.0/css/font-awesome.min.css">
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.7/umd/popper.min.js"></script>
+<script src="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/js/bootstrap.min.js"></script>
+<style type="text/css">
+    .bs-example{
+        margin: 20px;
+    }
+</style>
+<style>
+.dropbtn {
+  background-color: #3498DB;
+  color: white;
+  padding: 16px;
+  font-size: 16px;
+  border: none;
+  cursor: pointer;
+}
+
+.dropbtn:hover, .dropbtn:focus {
+  background-color: #2980B9;
+}
+
+#myInput {
+  box-sizing: border-box;
+  background-image: url('./static/images/searchicon.png');
+  background-position: 14px 12px;
+  background-repeat: no-repeat;
+  font-size: 16px;
+  padding: 14px 20px 12px 45px;
+  border: none;
+  border-bottom: 1px solid #ddd;
+}
+
+#myInput:focus {outline: 3px solid #ddd;}
+
+.dropdown {
+  position: relative;
+  display: inline-block;
+}
+
+.dropdown-content {
+  display: none;
+  position: absolute;
+  background-color: #f6f6f6;
+  min-width: 230px;
+  overflow: auto;
+  border: 1px solid #ddd;
+  z-index: 1;
+}
+
+.dropdown-content a {
+  color: black;
+  padding: 12px 16px;
+  text-decoration: none;
+  display: block;
+}
+
+.dropdown a:hover {background-color: #ddd;}
+
+.show {display: block;}
+</style>
+</head>
+<body>
+<div class="bs-example">
+    <nav class="navbar navbar-expand-md navbar-dark bg-dark">
+        <a href="/" class="navbar-brand">COVID19</a>
+        <button type="button" class="navbar-toggler" data-toggle="collapse" data-target="#navbarCollapse">
+            <span class="navbar-toggler-icon"></span>
+        </button>
+
+        <div class="collapse navbar-collapse" id="navbarCollapse">
+            <div class="navbar-nav">
+                <a href="/summary/country" class="nav-item nav-link active">All Countries</a>
+                <a href="/external" class="nav-item nav-link">Summary(External API)</a>
+                <a href="/LoadDatabase" class="nav-item nav-link">Load Database</a>
+                <a href="/summary/countrylist" class="nav-item nav-link">Country List(External API)</a>
+            </div>
+        </div>
+    </nav>
+</div>
+
+<p align="right">Last Updated - {{ TimeStamp }}</p>
+<h1 align="center">COVID-19 CORONAVIRUS PANDEMIC</h1>
+<br>
+<h3 align="center" style="color:maroon">Global Cases</h3>
+
+<h5 align="center">Total Corona Virus Cases: {{ Global_TotalConfirmed }}</h5>
+<h5 align="center">Total Deaths: {{ Global_TotalDeaths }}</h5>
+<h5 align="center">New Deaths: {{ Global_NewDeaths }}</h5>
+<h5 align="center">New Confimed Cases: {{ Global_NewConfirmed }}</h5>
+<h5 align="center">New Recovered Cases: {{Global_NewRecovered }}</h5>
+<h5 align="center">Total Recovered Cases: {{Global_TotalRecovered }}</h5>
+<br>
+
+
+<h3 align="center" style="color:maroon">Country Wise Cases</h3>
+
+<p align="center">Select one from below list to view the country wise cases.</p>
+
+<div class="text-center">
+
+<div class="dropdown">
+  <button onclick="myFunction()" class="dropbtn">Select Country</button>
+  <div id="myDropdown" class="dropdown-content">
+    <input type="text" placeholder="Search.." id="myInput" onkeyup="filterFunction()">
+    <a href="summary/country/gibraltar">Gibraltar</a>
+    <a href="summary/country/san-marino">San Marino</a>
+    <a href="summary/country/burundi">Burundi</a>
+    <a href="summary/country/cameroon">Cameroon</a>
+    <a href="summary/country/comoros">Comoros</a>
+    <a href="summary/country/gambia">Gambia</a>
+    <a href="summary/country/guinea">Guinea</a>
+    <a href="summary/country/jamaica">Jamaica</a>
+    <a href="summary/country/united-arab-emirates">United Arab Emirates</a>
+    <a href="summary/country/botswana">Botswana</a>
+    <a href="summary/country/mauritius">Mauritius</a>
+    <a href="summary/country/greece">Greece</a>
+    <a href="summary/country/hungary">Hungary</a>
+    <a href="summary/country/niger">Niger</a>
+    <a href="summary/country/singapore">Singapore</a>
+    <a href="summary/country/cape-verde">Cape Verde</a>
+    <a href="summary/country/antigua-and-barbuda">Antigua and Barbuda</a>
+    <a href="summary/country/barbados">Barbados</a>
+    <a href="summary/country/cook-islands">Cook Islands</a>
+    <a href="summary/country/kuwait">Kuwait</a>
+    <a href="summary/country/kyrgyzstan">Kyrgyzstan</a>
+    <a href="summary/country/luxembourg">Luxembourg</a>
+    <a href="summary/country/saudi-arabia">Saudi Arabia</a>
+    <a href="summary/country/bangladesh">Bangladesh</a>
+    <a href="summary/country/cyprus">Cyprus</a>
+    <a href="summary/country/niue">Niue</a>
+    <a href="summary/country/el-salvador">El Salvador</a>
+    <a href="summary/country/gabon">Gabon</a>
+    <a href="summary/country/namibia">Namibia</a>
+    <a href="summary/country/switzerland">Switzerland</a>
+    <a href="summary/country/dominican-republic">Dominican Republic</a>
+    <a href="summary/country/ireland">Ireland</a>
+    <a href="summary/country/liechtenstein">Liechtenstein</a>
+    <a href="summary/country/macao-sar-china">Macao, SAR China</a>
+    <a href="summary/country/nepal">Nepal</a>
+    <a href="summary/country/slovakia">Slovakia</a>
+    <a href="summary/country/tonga">Tonga</a>
+    <a href="summary/country/argentina">Argentina</a>
+    <a href="summary/country/cayman-islands">Cayman Islands</a>
+    <a href="summary/country/congo-kinshasa">Congo (Kinshasa)</a>
+    <a href="summary/country/libya">Libya</a>
+    <a href="summary/country/mayotte">Mayotte</a>
+    <a href="summary/country/spain">Spain</a>
+    <a href="summary/country/bhutan">Bhutan</a>
+    <a href="summary/country/albania">Albania</a>
+    <a href="summary/country/mali">Mali</a>
+    <a href="summary/country/micronesia">Micronesia, Federated States of</a>
+    <a href="summary/country/tanzania">Tanzania, United Republic of</a>
+    <a href="summary/country/ethiopia">Ethiopia</a>
+    <a href="summary/country/nauru">Nauru</a>
+    <a href="summary/country/paraguay">Paraguay</a>
+    <a href="summary/country/china">China</a>
+    <a href="summary/country/belgium">Belgium</a>
+    <a href="summary/country/united-states">United States of America</a>
+    <a href="summary/country/taiwan">Taiwan, Republic of China</a>
+    <a href="summary/country/turks-and-caicos-islands">Turks and Caicos Islands</a>
+    <a href="summary/country/chad">Chad</a>
+    <a href="summary/country/afghanistan">Afghanistan</a>
+    <a href="summary/country/israel">Israel</a>
+    <a href="summary/country/mozambique">Mozambique</a>
+    <a href="summary/country/seychelles">Seychelles</a>
+    <a href="summary/country/ukraine">Ukraine</a>
+    <a href="summary/country/solomon-islands">Solomon Islands</a>
+    <a href="summary/country/indonesia">Indonesia</a>
+    <a href="summary/country/bouvet-island">Bouvet Island</a>
+    <a href="summary/country/réunion">Réunion</a>
+    <a href="summary/country/slovenia">Slovenia</a>
+    <a href="summary/country/uzbekistan">Uzbekistan</a>
+    <a href="summary/country/guinea-bissau">Guinea-Bissau</a>
+    <a href="summary/country/new-zealand">New Zealand</a>
+    <a href="summary/country/tunisia">Tunisia</a>
+    <a href="summary/country/tuvalu">Tuvalu</a>
+    <a href="summary/country/venezuela">Venezuela (Bolivarian Republic)</a>
+    <a href="summary/country/brazil">Brazil</a>
+    <a href="summary/country/croatia">Croatia</a>
+    <a href="summary/country/moldova">Moldova</a>
+    <a href="summary/country/turkmenistan">Turkmenistan</a>
+    <a href="summary/country/united-kingdom">United Kingdom</a>
+    <a href="summary/country/andorra">Andorra</a>
+    <a href="summary/country/faroe-islands">Faroe Islands</a>
+    <a href="summary/country/senegal">Senegal</a>
+    <a href="summary/country/american-samoa">American Samoa</a>
+    <a href="summary/country/canada">Canada</a>
+    <a href="summary/country/costa-rica">Costa Rica</a>
+    <a href="summary/country/denmark">Denmark</a>
+    <a href="summary/country/latvia">Latvia</a>
+    <a href="summary/country/romania">Romania</a>
+    <a href="summary/country/sweden">Sweden</a>
+    <a href="summary/country/bolivia">Bolivia</a>
+    <a href="summary/country/christmas-island">Christmas Island</a>
+    <a href="summary/country/madagascar">Madagascar</a>
+    <a href="summary/country/jersey">Jersey</a>
+    <a href="summary/country/peru">Peru</a>
+    <a href="summary/country/azerbaijan">Azerbaijan</a>
+    <a href="summary/country/fiji">Fiji</a>
+    <a href="summary/country/malaysia">Malaysia</a>
+    <a href="summary/country/norfolk-island">Norfolk Island</a>
+    <a href="summary/country/panama">Panama</a>
+    <a href="summary/country/cuba">Cuba</a>
+    <a href="summary/country/falkland-islands-malvinas">Falkland Islands (Malvinas)</a>
+    <a href="summary/country/haiti">Haiti</a>
+    <a href="summary/country/korea-north">Korea (North)</a>
+    <a href="summary/country/vanuatu">Vanuatu</a>
+    <a href="summary/country/virgin-islands">Virgin Islands, US</a>
+    <a href="summary/country/iraq">Iraq</a>
+    <a href="summary/country/marshall-islands">Marshall Islands</a>
+    <a href="summary/country/tokelau">Tokelau</a>
+    <a href="summary/country/bermuda">Bermuda</a>
+    <a href="summary/country/aruba">Aruba</a>
+    <a href="summary/country/morocco">Morocco</a>
+    <a href="summary/country/russia">Russian Federation</a>
+    <a href="summary/country/australia">Australia</a>
+    <a href="summary/country/chile">Chile</a>
+    <a href="summary/country/french-southern-territories">French Southern Territories</a>
+    <a href="summary/country/papua-new-guinea">Papua New Guinea</a>
+    <a href="summary/country/saint-lucia">Saint Lucia</a>
+    <a href="summary/country/yemen">Yemen</a>
+    <a href="summary/country/iran">Iran, Islamic Republic of</a>
+    <a href="summary/country/mauritania">Mauritania</a>
+    <a href="summary/country/saint-barthélemy">Saint-Barthélemy</a>
+    <a href="summary/country/saint-martin-french-part">Saint-Martin (French part)</a>
+    <a href="summary/country/guadeloupe">Guadeloupe</a>
+    <a href="summary/country/greenland">Greenland</a>
+    <a href="summary/country/maldives">Maldives</a>
+    <a href="summary/country/montenegro">Montenegro</a>
+    <a href="summary/country/sri-lanka">Sri Lanka</a>
+    <a href="summary/country/armenia">Armenia</a>
+    <a href="summary/country/bulgaria">Bulgaria</a>
+    <a href="summary/country/lao-pdr">Lao PDR</a>
+    <a href="summary/country/lebanon">Lebanon</a>
+    <a href="summary/country/philippines">Philippines</a>
+    <a href="summary/country/saint-pierre-and-miquelon">Saint Pierre and Miquelon</a>
+    <a href="summary/country/south-georgia-and-the-south-sandwich-islands">South Georgia and the South Sandwich Islands</a>
+    <a href="summary/country/malawi">Malawi</a>
+    <a href="summary/country/guyana">Guyana</a>
+    <a href="summary/country/svalbard-and-jan-mayen-islands">Svalbard and Jan Mayen Islands</a>
+    <a href="summary/country/benin">Benin</a>
+    <a href="summary/country/nigeria">Nigeria</a>
+    <a href="summary/country/northern-mariana-islands">Northern Mariana Islands</a>
+    <a href="summary/country/suriname">Suriname</a>
+    <a href="summary/country/togo">Togo</a>
+    <a href="summary/country/uganda">Uganda</a>
+    <a href="summary/country/kazakhstan">Kazakhstan</a>
+    <a href="summary/country/macedonia">Macedonia, Republic of</a>
+    <a href="summary/country/oman">Oman</a>
+    <a href="summary/country/sudan">Sudan</a>
+    <a href="summary/country/cote-divoire">Côte d'Ivoire</a>
+    <a href="summary/country/lithuania">Lithuania</a>
+    <a href="summary/country/turkey">Turkey</a>
+    <a href="summary/country/central-african-republic">Central African Republic</a>
+    <a href="summary/country/dominica">Dominica</a>
+    <a href="summary/country/equatorial-guinea">Equatorial Guinea</a>
+    <a href="summary/country/palestine">Palestinian Territory</a>
+    <a href="summary/country/somalia">Somalia</a>
+    <a href="summary/country/south-sudan">South Sudan</a>
+    <a href="summary/country/burkina-faso">Burkina Faso</a>
+    <a href="summary/country/british-virgin-islands">British Virgin Islands</a>
+    <a href="summary/country/martinique">Martinique</a>
+    <a href="summary/country/new-caledonia">New Caledonia</a>
+    <a href="summary/country/british-indian-ocean-territory">British Indian Ocean Territory</a>
+    <a href="summary/country/brunei">Brunei Darussalam</a>
+    <a href="summary/country/eritrea">Eritrea</a>
+    <a href="summary/country/guatemala">Guatemala</a>
+    <a href="summary/country/finland">Finland</a>
+    <a href="summary/country/japan">Japan</a>
+    <a href="summary/country/serbia">Serbia</a>
+    <a href="summary/country/anguilla">Anguilla</a>
+    <a href="summary/country/liberia">Liberia</a>
+    <a href="summary/country/belarus">Belarus</a>
+    <a href="summary/country/jordan">Jordan</a>
+    <a href="summary/country/samoa">Samoa</a>
+    <a href="summary/country/sierra-leone">Sierra Leone</a>
+    <a href="summary/country/congo-brazzaville">Congo (Brazzaville)</a>
+    <a href="summary/country/french-polynesia">French Polynesia</a>
+    <a href="summary/country/myanmar">Myanmar</a>
+    <a href="summary/country/poland">Poland</a>
+    <a href="summary/country/sao-tome-and-principe">Sao Tome and Principe</a>
+    <a href="summary/country/cambodia">Cambodia</a>
+    <a href="summary/country/iceland">Iceland</a>
+    <a href="summary/country/belize">Belize</a>
+    <a href="summary/country/netherlands">Netherlands</a>
+    <a href="summary/country/monaco">Monaco</a>
+    <a href="summary/country/heard-and-mcdonald-islands">Heard and Mcdonald Islands</a>
+    <a href="summary/country/mongolia">Mongolia</a>
+    <a href="summary/country/cocos-keeling-islands">Cocos (Keeling) Islands</a>
+    <a href="summary/country/germany">Germany</a>
+    <a href="summary/country/isle-of-man">Isle of Man</a>
+    <a href="summary/country/thailand">Thailand</a>
+    <a href="summary/country/french-guiana">French Guiana</a>
+    <a href="summary/country/estonia">Estonia</a>
+    <a href="summary/country/india">India</a>
+    <a href="summary/country/italy">Italy</a>
+    <a href="summary/country/kosovo">Republic of Kosovo</a>
+    <a href="summary/country/wallis-and-futuna-islands">Wallis and Futuna Islands</a>
+    <a href="summary/country/zambia">Zambia</a>
+    <a href="summary/country/bosnia-and-herzegovina">Bosnia and Herzegovina</a>
+    <a href="summary/country/czech-republic">Czech Republic</a>
+    <a href="summary/country/grenada">Grenada</a>
+    <a href="summary/country/guernsey">Guernsey</a>
+    <a href="summary/country/honduras">Honduras</a>
+    <a href="summary/country/saint-vincent-and-the-grenadines">Saint Vincent and Grenadines</a>
+    <a href="summary/country/swaziland">Swaziland</a>
+    <a href="summary/country/bahamas">Bahamas</a>
+    <a href="summary/country/austria">Austria</a>
+    <a href="summary/country/kenya">Kenya</a>
+    <a href="summary/country/saint-kitts-and-nevis">Saint Kitts and Nevis</a>
+    <a href="summary/country/nicaragua">Nicaragua</a>
+    <a href="summary/country/pitcairn">Pitcairn</a>
+    <a href="summary/country/south-africa">South Africa</a>
+    <a href="summary/country/uruguay">Uruguay</a>
+    <a href="summary/country/western-sahara">Western Sahara</a>
+    <a href="summary/country/algeria">Algeria</a>
+    <a href="summary/country/ecuador">Ecuador</a>
+    <a href="summary/country/montserrat">Montserrat</a>
+    <a href="summary/country/portugal">Portugal</a>
+    <a href="summary/country/puerto-rico">Puerto Rico</a>
+    <a href="summary/country/norway">Norway</a>
+    <a href="summary/country/tajikistan">Tajikistan</a>
+    <a href="summary/country/colombia">Colombia</a>
+    <a href="summary/country/georgia">Georgia</a>
+    <a href="summary/country/vietnam">Viet Nam</a>
+    <a href="summary/country/france">France</a>
+    <a href="summary/country/lesotho">Lesotho</a>
+    <a href="summary/country/netherlands-antilles">Netherlands Antilles</a>
+    <a href="summary/country/qatar">Qatar</a>
+    <a href="summary/country/rwanda">Rwanda</a>
+    <a href="summary/country/trinidad-and-tobago">Trinidad and Tobago</a>
+    <a href="summary/country/hong-kong-sar-china">Hong Kong, SAR China</a>
+    <a href="summary/country/ala-aland-islands">ALA Aland Islands</a>
+    <a href="summary/country/antarctica">Antarctica</a>
+    <a href="summary/country/kiribati">Kiribati</a>
+    <a href="summary/country/malta">Malta</a>
+    <a href="summary/country/palau">Palau</a>
+    <a href="summary/country/zimbabwe">Zimbabwe</a>
+    <a href="summary/country/djibouti">Djibouti</a>
+    <a href="summary/country/egypt">Egypt</a>
+    <a href="summary/country/holy-see-vatican-city-state">Holy See (Vatican City State)</a>
+    <a href="summary/country/angola">Angola</a>
+    <a href="summary/country/korea-south">Korea (South)</a>
+    <a href="summary/country/saint-helena">Saint Helena</a>
+    <a href="summary/country/syria">Syrian Arab Republic (Syria)</a>
+    <a href="summary/country/timor-leste">Timor-Leste</a>
+    <a href="summary/country/us-minor-outlying-islands">US Minor Outlying Islands</a>
+    <a href="summary/country/bahrain">Bahrain</a>
+    <a href="summary/country/ghana">Ghana</a>
+    <a href="summary/country/guam">Guam</a>
+    <a href="summary/country/mexico">Mexico</a>
+    <a href="summary/country/pakistan">Pakistan</a>
+  </div>
+</div>
+</div>
+
+<script>
+/* When the user clicks on the button,
+toggle between hiding and showing the dropdown content */
+function myFunction() {
+  document.getElementById("myDropdown").classList.toggle("show");
+}
+
+function filterFunction() {
+  var input, filter, ul, li, a, i;
+  input = document.getElementById("myInput");
+  filter = input.value.toUpperCase();
+  div = document.getElementById("myDropdown");
+  a = div.getElementsByTagName("a");
+  for (i = 0; i < a.length; i++) {
+    txtValue = a[i].textContent || a[i].innerText;
+    if (txtValue.toUpperCase().indexOf(filter) > -1) {
+      a[i].style.display = "";
+    } else {
+      a[i].style.display = "none";
+    }
+  }
+}
+</script>
+
+</body>
+</html>
