@@ -100,6 +100,7 @@ cqlsh> COPY COVID19.summary(Country, NewConfirmed, TotalConfirmed, NewDeaths, To
 
 cqlsh> COPY COVID19.global(Key, NewConfirmed, TotalConfirmed, NewDeaths, TotalDeaths, NewRecovered, TotalRecovered)
        FROM '/home/global.csv' WITH HEADER=TRUE;
+```
 
 ## Cloud Security - HTTPS Implementation
 
@@ -174,17 +175,17 @@ spec:
         - containerPort: 443
 ```
 
-2. Build the cassandra docker image and tag it to registry. 
+3. Build the cassandra docker image and tag it to registry. 
 ```
 sudo docker build . -t localhost:32000/covidapp:registry
 ```
 
-3. Push it to registry
+4. Push it to registry
 ```
 sudo docker push localhost:32000/covidapp:registry
 ```
 
-4. Pushing to this insecure registry may fail in some versions of Docker unless the daemon is explicitly configured to trust this registry. 
+5. Pushing to this insecure registry may fail in some versions of Docker unless the daemon is explicitly configured to trust this registry. 
    To address this we need to edit /etc/docker/daemon.json and add:
 ```
 {
@@ -193,39 +194,39 @@ sudo docker push localhost:32000/covidapp:registry
 ```
 Note: This step is optional and must be done only if docker push has failed.
 
-5. The new configuration should be loaded with a Docker daemon restart:
+6. The new configuration should be loaded with a Docker daemon restart:
 ```
 sudo systemectl restart docker
 ```
 
-6. Now that we have restarted our docker daemon all the container instances would have stopped running. This means that the cassandra database docker container 'cassandra-test' 
+7. Now that we have restarted our docker daemon all the container instances would have stopped running. This means that the cassandra database docker container 'cassandra-test' 
    has stopped running. Re-start the same container instance using below command:
 ```
 sudo docker start cassandra-test
 ```
 
-7. Deploy the docker conatiner image 'covidapp:registry' present in registry using the configured deployment.yaml file:
+8. Deploy the docker conatiner image 'covidapp:registry' present in registry using the configured deployment.yaml file:
 ```
 sudo microk8s.kubectl apply -f ./deployment.yaml
 ```
 The we app is now deployed in kubernetes
 
-8. Check the deployment status
+9. Check the deployment status
 ```
 sudo microk8s.kubectl get deployment
 ```
 
-9. Check the pods status
+10. Check the pods status
 ```
 sudo microk8s.kubectl get pods
 ```
 
-10. Create a service and expose the deployment to internet
+11. Create a service and expose the deployment to internet
 ```
 sudo microk8s.kubectl expose deployment covidapp-deployment --port=443 --type=LoadBalancer
 ```
 
-11. Check the service status
+12. Check the service status
 ```
 sudo microk8s.kubectl get services
 ```
