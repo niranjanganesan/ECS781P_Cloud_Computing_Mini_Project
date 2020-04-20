@@ -15,33 +15,122 @@ in the AWS EC2 instance.
 
 ## Interacting with Web Application 
 
-### Accessing the home page: @app.route('/', methods =['GET'])
+### External API 
 
-The Home page displays the Global statistics of COVID 19 along with links to view the Country wise stats and interation with external REST API.
+#### *GET* @app.route('/external')
+Get the summary of all countries and global stats.
 
-### @app.route('/LoadDatabase', methods=['GET','PUT'])
+#### *GET* @app.route('/summary/countrylist')
+Get the list of all countries along with slug and country code details.
 
-### @app.route('/external')
+#### *GET*, *PUT* @app.route('/LoadDatabase')
+This loads the database with COVID 19 country stats using the external API 'https://api.covid19api.com/summary'
 
-### @app.route('/summary/country', methods=['GET'])
+### REST-based Service Interface
+ 
+#### *GET* @app.route('/')
+The Home page displays the Global statistics of COVID 19 along with links to view the Country wise stats and interaction with external REST API. One can use the curl command:
 
-### @app.route('/summary/global', methods=['GET'])
+#### *GET* @app.route('/summary/country')
+Get the stats of all countries from the database. Can be executed using following curl command:
+```
+curl -i -k https://0.0.0.0/summary/country
+```
 
-### @app.route('/summary/countrylist', methods=['GET'])
+#### *GET* @app.route('/summary/global')
+Get the global stats from the database. Can be executed using the following curl command:
+```
+curl -i -k https://0.0.0.0/summary/global
+```
 
-### @app.route('/summary/country/<name>',  methods=['GET'])
+#### *GET* @app.route('/summary/country/<name>')
+Get the country specific stats from the database. Can be executed using the follwing curl command:
+```
+curl -i -k https://0.0.0.0/summary/country/TestCountry
+```
+#### *POST* @app.route('/summary/country')
+Add a new country to the database. The user must provided the following:
 
-### @app.route('/summary/country',  methods=['POST'])
+* Country
+* NewConfirmed
+* TotalConfirmed
+* NewDeaths
+* TotalDeaths
+* NewRecovered
+* TotalRecovered
 
-### @app.route('/summary/country',  methods=['PUT'])
+This is a POST request and can be executed by using the following curl command:
+```
+curl -i -k -H "Content-Type: application/json" -X POST -d '{"NewConfirmed":2,"TotalConfirmed":3,"NewDeaths":3,"TotalDeaths":3,"NewRecovered":3,"TotalRecovered":3,"Country":"TestCountry"}' https://0.0.0.0/summary/country
+```
 
-### @app.route('/summary/country',  methods=['DELETE'])
+#### *PUT* @app.route('/summary/country')
+Update an existing country to the database. The user must provide the following:
 
-### @app.route('/summary/global',  methods=['POST'])
+* Country
+* NewConfirmed
+* TotalConfirmed
+* NewDeaths
+* TotalDeaths
+* NewRecovered
+* TotalRecovered
 
-### @app.route('/summary/global',  methods=['PUT'])
+This is a PUT request and can be executed using the following curl command:
+```
+curl -i -k -H "Content-Type: application/json" -X PUT -d '{"NewConfirmed":999,"TotalConfirmed":3,"NewDeaths":3,"TotalDeaths":3,"NewRecovered":3,"TotalRecovered":3,"Country":"TestCountry"}' https://0.0.0.0/summary/country
+```
 
-### @app.route('/summary/global',  methods=['DELETE'])
+#### *DELETE* @app.route('/summary/country')
+Deletes a country record from the database. The user must provide the following:
+
+* Country
+
+This is a DELETE request and can be executed using the following curl command:
+```
+curl -i -k -H "Content-Type: application/json" -X DELETE -d '{"Country":"TestCountry"}' https://0.0.0.0/summary/country
+```
+
+### *POST* @app.route('/summary/global')
+Add the global stats to the database. The user must provide the following:
+
+* Key
+* NewConfirmed
+* TotalConfirmed
+* NewDeaths
+* TotalDeaths
+* NewRecovered
+* TotalRecovered
+
+Here 'key' refers to value 'Global'. This is a POST request and can be executed using the following command:
+```
+curl -i -k -H "Content-Type: application/json" -X POST -d '{"NewConfirmed":9,"TotalConfirmed":3,"NewDeaths":3,"TotalDeaths":3,"NewRecovered":3,"TotalRecovered":3,"Key":"TestGlobal"}' https://0.0.0.0/summary/global
+```
+
+### *PUT* @app.route('/summary/global')
+Updates the global stats to the database. The user must provide the following:
+
+* Key
+* NewConfirmed
+* TotalConfirmed
+* NewDeaths
+* TotalDeaths
+* NewRecovered
+* TotalRecovered
+
+Here 'key' refers to value 'Global'. This is a PUT request and can be executed using the following command:
+```
+curl -i -k -H "Content-Type: application/json" -X PUT -d '{"NewConfirmed":1,"TotalConfirmed":10,"NewDeaths":3,"TotalDeaths":3,"NewRecovered":3,"TotalRecovered":3,"Key":"TestGlobal"}' https://0.0.0.0/summary/global
+```
+
+#### *DELETE* @app.route('/summary/global')
+Deletes the global stats record from the database. The user must provide the following:
+
+*Key
+
+Here 'key' referes to value 'Global'. This is a DELETE request and can be executed using the following command:
+```
+curl -i -k -H "Content-Type: application/json" -X DELETE -d '{"Key":"TestGlobal"}' https://ec2-54-81-8-22.compute-1.amazonaws.com/summary/global
+```
 
 ## Apache Cassandra Database setup
 
@@ -170,7 +259,7 @@ spec:
     spec:
       containers:
       - name: covidapp
-        image: localhost:32000/covidappv3:registry
+        image: localhost:32000/covidapp:registry
         ports:
         - containerPort: 443
 ```
