@@ -101,3 +101,164 @@ cqlsh> COPY COVID19.summary(Country, NewConfirmed, TotalConfirmed, NewDeaths, To
 cqlsh> COPY COVID19.global(Key, NewConfirmed, TotalConfirmed, NewDeaths, TotalDeaths, NewRecovered, TotalRecovered)
        FROM '/home/global.csv' WITH HEADER=TRUE;
 
+## Cloud Security - HTTPS Implementation
+
+The app is served over https by setting up the self-signed certificates as shown below:
+1. Run in your project folder
+```
+$ openssl req -x509 -newkey rsa:4096 -nodes -out cert.pem -keyout key.pem -days 365
+```
+2. Configure the certificate as shown below:
+```
+Generating a RSA private key
+.....................................++++
+....................................................................................++++
+writing new private key to 'key.pem'
+-----
+You are about to be asked to enter information that will be incorporated
+into your certificate request.
+What you are about to enter is what is called a Distinguished Name or a DN.
+There are quite a few fields but you can leave some blank
+For some fields there will be a default value,
+If you enter '.', the field will be left blank.
+-----
+Country Name (2 letter code) [AU]:UK
+State or Province Name (full name) [Some-State]:England
+Locality Name (eg, city) []:London
+Organization Name (eg, company) [Internet Widgits Pty Ltd]:QMUL 
+Organizational Unit Name (eg, section) []:
+Common Name (e.g. server FQDN or YOUR name) []:localhost
+Email Address []:ec17524@qmul.ac.uk
+```
+
+3. The result is the creation of two files cret.pem and key.pem. Include these two files in the app_flask.py program file as shown below:
+```
+if __name__ == "__main__":
+    context = ('cert.pem','key.pem')
+    app.run(host='0.0.0.0',port=443,ssl_context=context)
+```
+
+4. Adding the certificate will serve the application over https
+
+## Kubernetes Deployment
+
+Below are the steps to build the docker image and deploy application in kubernetes
+
+1. For private Docker images the docker image must be registered to the built in registry for it to function. Install registry with following command:
+```
+sudo microk8s enable registry
+```
+
+2. Configure the deployment.yaml file in your project directory as shown below:
+```
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: covidapp-deployment
+  labels:
+    app: covidapp
+spec:
+  selector:
+    matchLabels:
+      app: covidapp
+  replicas: 3
+  template:
+    metadata:
+      labels:
+        app: covidapp
+    spec:
+      containers:
+      - name: covidapp
+        image: localhost:32000/covidappv3:registry
+        ports:
+        - containerPort: 443
+```
+
+2. Build the cassandra docker image and tag it to registry. 
+```
+sudo docker build . -t localhost:32000/covidapp:registry
+```
+
+3. Push it to registry
+```
+sudo docker push localhost:32000/covidapp:registry
+```
+
+4. Pushing to this insecure registry may fail in some versions of Docker unless the daemon is explicitly configured to trust this registry. 
+   To address this we need to edit /etc/docker/daemon.json and add:
+```
+{
+  "insecure-registries" : ["localhost:32000"]
+}
+```
+Note: This step is optional and must be done only if docker push has failed.
+
+5. The new configuration should be loaded with a Docker daemon restart:
+```
+sudo systemectl restart docker
+```
+
+6. Now that we have restarted our docker daemon all the container instances would have stopped running. This means that the cassandra database docker container 'cassandra-test' 
+   has stopped running. Re-start the same container instance using below command:
+```
+sudo docker start cassandra-test
+```
+
+7. Deploy the docker conatiner image 'covidapp:registry' present in registry using the configured deployment.yaml file:
+```
+sudo microk8s.kubectl apply -f ./deployment.yaml
+```
+The we app is now deployed in kubernetes
+
+8. Check the deployment status
+```
+sudo microk8s.kubectl get deployment
+```
+
+9. Check the pods status
+```
+sudo microk8s.kubectl get pods
+```
+
+10. Create a service and expose the deployment to internet
+```
+sudo microk8s.kubectl expose deployment covidapp-deployment --port=443 --type=LoadBalancer
+```
+
+11. Check the service status
+```
+sudo microk8s.kubectl get services
+```
+Below is the sample status of the service:
+```
+NAME                            TYPE           CLUSTER-IP      EXTERNAL-IP   PORT(S)         AGE
+service/covidappv3-deployment   LoadBalancer   10.152.183.77   <pending>     443:30873/TCP   17h
+service/kubernetes              ClusterIP      10.152.183.1    <none>        443/TCP         9d
+```
+Here we can see the deployed web app is exposed to Nodeport '30873'. By default the kubernetes service allocates a port within range '30000-32767'.
+
+Finally view the web app in the browser using the public DNS of AWS EC2 account along with this Nodeport that starts with '30xxx'.
+
+### Cleanup
+
+1. Delete the Kubernetes deployment and LoadBalancer service using below commands:
+```
+sudo microk8s.kubectl delete deployment covidapp-deployment
+sudo microk8s.kubectl delete service covidapp-deployment
+```
+2. Delete the Cassandra database instance by:
+```
+sudo docker rm cassandra-test
+```
+
+## COVID 19 Web App built with:
+
+* [Cassandra](http://cassandra.apache.org/doc/latest/) - Database used
+* [Flask](http://flask.pocoo.org/docs/1.0/) - Web framework used
+* [Coronavirus COVID19 API](https://covid19api.com/) - External API used
+* [Kubernetes](https://microk8s.io/docs/registry-built-in) - Load balancing & Scaling
+* [Encryption & Security](https://blog.miguelgrinberg.com/post/running-your-flask-application-over-https) - TLS protocol using 'adhoc' SSL
+
+## Authors
+
+* **Niranjan Ganesan** - [Niranjan](https://github.com/niranjanganesan/ECS781P_Cloud_Computing_Mini_Project) 
