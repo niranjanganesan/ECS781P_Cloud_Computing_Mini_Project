@@ -129,7 +129,7 @@ Deletes the global stats record from the database. The user must provide the fol
 
 Here 'key' referes to value 'Global'. This is a DELETE request and can be executed using the following command:
 ```
-curl -i -k -H "Content-Type: application/json" -X DELETE -d '{"Key":"TestGlobal"}' https://ec2-54-81-8-22.compute-1.amazonaws.com/summary/global
+curl -i -k -H "Content-Type: application/json" -X DELETE -d '{"Key":"TestGlobal"}' https://0.0.0.0/summary/global
 ```
 
 ## Apache Cassandra Database setup
