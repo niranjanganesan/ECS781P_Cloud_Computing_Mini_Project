@@ -1,21 +1,21 @@
 apiVersion: apps/v1
 kind: Deployment
 metadata:
-  name: covidappv3-deployment
+  name: covidapp-deployment
   labels:
-    app: covidappv3
+    app: covidapp
 spec:
   selector:
     matchLabels:
-      app: covidappv3
+      app: covidapp
   replicas: 3
   template:
     metadata:
       labels:
-        app: covidappv3
+        app: covidapp
     spec:
       containers:
-      - name: covidappv3
-        image: localhost:32000/covidappv3:registry
+      - name: covidapp
+        image: localhost:32000/covidapp:registry
         ports:
-        - containerPort: 80
+        - containerPort: 443
