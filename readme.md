@@ -236,7 +236,7 @@ Below are the steps to build the docker image and deploy application in kubernet
 
 1. Install Kubernetes using the command:
 ```
-sudo snap install microk8s -classic
+sudo snap install microk8s --classic
 ```
 
 2. For private Docker images the docker image must be registered to the built in registry for it to function. Install registry with following command:
